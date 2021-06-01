@@ -12,7 +12,7 @@ import model.Shop;
  * @author avillota
  *	
  */
-public class TestScenario {
+public class TestScenario{
 	
 	public void createScenario1(Shop shop) {
 		//Creating and adding Books

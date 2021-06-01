@@ -3,11 +3,12 @@ package ui;
 import java.util.Scanner;
 
 import model.Shop;
+import model.ProductType;
 
 /**
  * 
  * @author angievig
- *
+ * 
  */
 public class MainShop {
 	private Shop shop;
@@ -40,7 +41,7 @@ public class MainShop {
 			addProductCatalog();
 			break;
 		case 2:
-			System.out.println(shop.showCatalog());
+			System.out.println(shop.showCatalog() + "\n=====================================\n");
 			break;
 		case 3:
 			processProduct();
@@ -58,7 +59,7 @@ public class MainShop {
 		int days= sc.nextInt();
 		sc.nextLine();
 		
-		String answer =shop.rentProduct(code, days);
+		String answer = shop.rentProduct(code, days);
 		System.out.println(answer);
 		
 		
@@ -130,7 +131,78 @@ public class MainShop {
 		
 	}
 	
-	public void addProductCatalog() {
+	public void addProductCatalog(){
+		ProductType type = null;
+		
+		System.out.println("Porfavor ingrese los siguientes datos del producto: \n");
+		System.out.println("Porfavor escoja el tipo de producto que deseas agregar:");
+		System.out.println("( 1 ): Libro");
+		System.out.println("( 2 ): Magacine");
+		System.out.println("( 3 ): Pelicula en DVD");
+		System.out.println("( 4 ): Pelicula Descargada");
+		
+		int option = 0;
+		do{
+			System.out.print("Opcion: ");
+			option = sc.nextInt();
+			sc.nextLine();
+			
+			switch(option){
+				case 1:
+				type = ProductType.BOOK;
+				break;
+				case 2:
+				type = ProductType.MAGAZINE;
+				break;
+				case 3:
+				type = ProductType.DVD_MOVIE;
+				break;
+				case 4:
+				type = ProductType.DOWNLOAD_MOVIE;
+				break;
+				default:
+				option = 0;
+				break;
+			}
+			
+		}while(option == 0);
+		
+		System.out.print("Codigo del producto: ");
+		String code = sc.nextLine();
+		
+		System.out.print("Nombre del producto: ");
+		String name = sc.nextLine();
+		
+		System.out.print("Precio del producto: $");
+		double price = sc.nextDouble();
+		
+		System.out.println("¿El producto sera puesto a la venta?");
+		System.out.println("( 1 ) SI\n( 2 ) NO");
+		
+		int option2 = 0;
+		do{
+			System.out.print("Opcion: ");
+			option2 = sc.nextInt();
+			sc.nextLine();
+			
+			switch(option2){
+				case 1:
+				System.out.println("Porfavor ingrese las unidades que dispondra a la venta: ");
+				System.out.print("Unidades: ");
+				int units = sc.nextInt();
+				sc.nextLine();
+				
+				System.out.println(shop.addProduct(code, name, units, price, type));
+				break;
+				case 2:
+				System.out.println(shop.addProduct(code, name, price, type));
+				break;
+				default:
+				option = 0;
+				break;
+			}
+			
+		}while(option2 == 0);
 		
 	}
 	

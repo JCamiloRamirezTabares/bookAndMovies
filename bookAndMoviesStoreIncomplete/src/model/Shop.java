@@ -18,8 +18,8 @@ public class Shop {
 	/**
 	 * Constantes para definir la operación a ejecutar
 	 */
-	public static final int RENT=1;
-	public static final int SALE=2;
+	public static final int RENT = 1;
+	public static final int SALE = 2;
 	
 	/**
 	 * Nombre de la tienda
@@ -51,8 +51,8 @@ public class Shop {
 	public Shop(String aName) {
 		name = aName;
 		catalog = new ArrayList<Product>();
-		totalSales=0;
-		totalRents=0;
+		totalSales = 0;
+		totalRents = 0;
 		
 	}
 
@@ -71,7 +71,15 @@ public class Shop {
 	 * informando que el producto ya existe. 
 	 */
 	public String addProduct(String code,String name, int units, double price, ProductType type) {
-		return "";
+		Product aux = new ProductForSale(code, name, units, price, type);
+		
+		if(catalog.contains(aux)){
+			return "Ya existe un producto con esas caracteristicas";
+		} else{
+			catalog.add(new ProductForSale(code, name, units, price, type));
+			return "El producto se ha añadido correctamente al catalogo";
+		}
+		
 	}
 	
 
@@ -89,7 +97,16 @@ public class Shop {
 	 * informando que el producto ya existe. 
 	 */
 	public String addProduct(String code, String name, double price, ProductType type) {
-		return "";
+		
+		Product aux = new ProductForRent(code, name, price, type);
+		
+		if(catalog.contains(aux)){
+			return "Ya existe un producto con esas caracteristicas";
+		} else{
+			catalog.add(new ProductForRent(code, name, price, type));
+			return "El producto se ha añadido correctamente al catalogo";
+		}
+		
 	}
 	
 	/**
@@ -98,7 +115,14 @@ public class Shop {
 	 * @return cadena con la informacion de los productos
 	 */
 	public String showCatalog() {
-		return "";
+		String confirmation = "";
+		
+		for(int i = 0; i < catalog.size(); i++){
+			
+			confirmation += catalog.get(i).getInformation() + "\n";
+		}
+		
+		return confirmation;
 	}
 	
 	/**
@@ -111,7 +135,16 @@ public class Shop {
 	 * no contiene un producto con ese código
 	 */
 	public Product findProduct(String code) {
-		Product p=null;
+		Product p = null;
+		boolean sentinel = false;
+		
+		for(int i = 0; i < catalog.size() && !sentinel; i++){
+			if(catalog.get(i).getCode().equals(code)){
+				p = catalog.get(i);
+				sentinel = true;
+			}
+		}
+		
 		
 		return p;
 	}
@@ -191,6 +224,21 @@ public class Shop {
 	 * @return un mensaje con el resultado de la venta
 	 */
 	private  String sale(Saleable p, int units, double discount) {
+		String confirmation = "";
+		
+		if(p.isSafeSale(units) == true){
+			confirmation += "El precio de la venta es $" + p.getSalePrice(units) + "\n";
+			double subtotal = p.getSalePrice(units);
+			confirmation += "Con el descuento aplicado quedaria en $" + p.applyExtraDiscount(subtotal, discount) + "\n";
+			subtotal = p.applyExtraDiscount(subtotal, discount);
+			confirmation += "Despues de aplicado impuestos quedaria en $" + p.calculateTax(subtotal, TAX_IVA) + "\n";
+			confirmation += "Por lo tanto el total a pagar es $" + p.calculateTax(subtotal, TAX_IVA) + "\n";
+			totalSales += units;
+			/**int newUnits = p.getUnits() - units;
+			p.setUnits(newUnits);*/
+			confirmation += "\n================================\nLa compra del producto ha sido exitosa\n================================\n";
+			
+		} else{confirmation = "No hay suficientes productos para vender";}
 		
 		/*
 		 * Para hacer una venta
@@ -205,7 +253,7 @@ public class Shop {
 		 * si no: 
 		 *  - Se muestra un mensaje reportando el error.
 		 */
-		return "";
+		return confirmation;
 		
 	}
 	
@@ -221,6 +269,19 @@ public class Shop {
 	 * @return un mensaje con el resultado del alquiler
 	 */
 	private  String rent(Rentable p, int days) {
+		String confirmation = "";
+		
+		if(p.isSafeRent() == true){
+			confirmation += "El precio del alquiler es $" + ((p.getRentPrice(days))/days) + "\n";
+			p.rentProduct(days);
+			confirmation += "El total a pagar es $" + p.getRentPrice(days) + "\n";
+			/**int newUnits = p.getUnits() - units;
+			p.setUnits(newUnits);*/
+			confirmation += "\n================================\nSe ha alquilado el producto exitosamente\n================================\n";
+			
+		} else{confirmation = "No hay suficientes productos para vender";}
+		
+		
 		/*
 		 * Para hacer una venta
 		 * 1. Se verifica si es eguro alquilar, es decir si el producto 
@@ -233,7 +294,7 @@ public class Shop {
 		 * si no: 
 		 *  - Se muestra un mensaje reportando el error.
 		 */
-		return"";
+		return confirmation;
 	}
 	
 
